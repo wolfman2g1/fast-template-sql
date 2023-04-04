@@ -2,16 +2,22 @@ from fastapi import FastAPI
 import uvicorn
 import logging
 import logging.config
-from breeze_service.logging_config import LOGGING_CONFIG
+from service.logging_config import LOGGING_CONFIG
 from fastapi.middleware.cors import CORSMiddleware
-from breeze_service.settings import config
-from breeze_service.api import ping, customer, contacts, techs
+from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from service.settings import config
+
 
 
 "Log setup"
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
+# Acquire a tracer
+tracer = trace.get_tracer(__name__)
+# Acquire a meter.
+meter = metrics.get_meter(__name__)
 
 def configure_app():
     logger.info("Using Config %s", config.ENV)
@@ -23,7 +29,7 @@ def configure_app():
         allow_methods=["*"],
         allow_headers=["*"]
     )
-    app.include_router(ping.router)
+   # app.include_router(ping.router)
     app.include_router(customer.router)
     app.include_router(contacts.router)
     app.include_router(techs.router)

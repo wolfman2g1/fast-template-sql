@@ -35,9 +35,9 @@ def configure_app():
     app.include_router(techs.router)
 
     return app
-
+FastAPIInstrumentor.instrument_app(app)
 
 if __name__ == "__main__":
-    logger.info("Starting Breeze")
+    logger.info(f"Starting {config.SERVICE_NAME}")
     app = configure_app()
     uvicorn.run(app, host="0.0.0.0")
